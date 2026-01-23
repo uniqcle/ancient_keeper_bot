@@ -1,36 +1,46 @@
-export const start = async (ctx: MyContext) => {
-	if (!ctx.from) {
-		return ctx.reply("User info is not available");
-	}
+import {
+    Bot,
+    GrammyError,
+    HttpError,
+    InlineKeyboard,
+    InputFile,
+    Composer,
+} from "grammy";
+import { MyContext } from "../types/types.js";
+import { User } from "../models/IUser.js";
 
-	const { id, first_name, username } = ctx.from;
+export const userAuth = async (ctx: MyContext) => {
+    if (!ctx.from) {
+        return ctx.reply("User info is not available");
+    }
 
-	try {
-		const keyboard = new InlineKeyboard().text("Меню", "menu");
+    const { id, first_name, username } = ctx.from;
 
-		const existingUser = await User.findOne({ t_id: id });
-		if (existingUser) {
-			return ctx.reply("Вы уже зарегестрированы!", {
-				reply_markup: keyboard,
-			});
-		}
+    try {
+        const keyboard = new InlineKeyboard().text("Меню", "menu");
 
-		const newUser = new User({
-			t_id: id,
-			first_name,
-			username,
-		});
+        const existingUser = await User.findOne({ t_id: id });
+        if (existingUser) {
+            return ctx.reply("Вы уже зарегестрированы!", {
+                reply_markup: keyboard,
+            });
+        }
 
-		newUser.save();
+        const newUser = new User({
+            t_id: id,
+            first_name,
+            username,
+        });
 
-		return ctx.reply("Вы успешно зарегестрированы!", {
-			reply_markup: keyboard,
-		});
+        newUser.save();
 
-	} catch (error) {
-		console.error("Ошибка при регистрации!", error);
-		ctx.reply("Произошла ошибка!");
-	}
+        return ctx.reply("Вы успешно зарегестрированы!", {
+            reply_markup: keyboard,
+        });
+    } catch (error) {
+        console.error("Ошибка при регистрации!", error);
+        ctx.reply("Произошла ошибка!");
+    }
 
-	ctx.reply("Привет! Отправь мне любой текст, и я его повторю.");
+    ctx.reply("Привет! Отправь мне любой текст, и я его повторю.");
 };

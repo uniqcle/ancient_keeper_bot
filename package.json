@@ -13,6 +13,7 @@
     "license": "ISC",
     "dependencies": {
         "@grammyjs/hydrate": "^1.6.0",
+        "@grammyjs/ratelimiter": "^1.2.1",
         "dotenv": "^17.2.3",
         "grammy": "^1.38.4",
         "mongoose": "^9.0.2"

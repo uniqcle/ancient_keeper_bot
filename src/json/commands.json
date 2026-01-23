@@ -1,7 +1,7 @@
  [
-     { "command": "start", "description": "Главное меню" },
-     { "command": "riddles", "description": "Загадки Хранителя" },
-     { "command": "stash", "description": "Тайник Хранителя" },
-     { "command": "treasury", "description": "Сокровищница" },
+     { "command": "start", "description": "Начало пути" },
+     { "command": "quest", "description": "Загадки Хранителя" },
+     { "command": "scrolls", "description": "Тайные свитки" },
+     { "command": "trophies", "description": "Мои трофеи" },
      { "command": "premium", "description": "Подписка" }
  ]

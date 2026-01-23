@@ -1,9 +1,10 @@
 import "dotenv/config";
 import { Bot, GrammyError, HttpError, InlineKeyboard } from "grammy";
 import { hydrate } from "@grammyjs/hydrate";
+import { limit } from "@grammyjs/ratelimiter";
 import mongoose from "mongoose";
 import { MyContext } from "./types/types.js";
-import { start, qwestList } from "./composers/index.js";
+import { start, quests } from "./composers/index.js";
 import commandsJson from "./json/commands.json" with { type: "json" };
 
 const BOT_API_KEY = process.env.BOT_TOKEN;
@@ -13,23 +14,28 @@ if (!BOT_API_KEY) {
 }
 
 const bot = new Bot<MyContext>(BOT_API_KEY);
-bot.use(hydrate());
-bot.use(start);
-bot.use(qwestList);
 
 bot.api.setMyCommands(commandsJson);
 
-bot.callbackQuery("menu", async (ctx) => {
-    await ctx.answerCallbackQuery();
+bot.use(limit());
+bot.use(hydrate());
+//bot.use(userAuth);
+bot.use(start);
+bot.use(quests);
 
-    ctx.callbackQuery.message?.editText(
-        "Вы в главном меню\n Отсюда вы можете попасть"
-    );
-});
+// bot.callbackQuery("menu", async (ctx) => {
+//     await ctx.answerCallbackQuery();
+
+//     ctx.callbackQuery.message?.editText(
+//         "Вы в главном меню\n Отсюда вы можете попасть"
+//     );
+// });
 
 // Ответ на любое сообщение
-bot.on("message:text", (ctx) => {
-    ctx.reply(ctx.message.text);
+bot.on("message:text", async (ctx) => {
+    console.log("Обработка текста" + ctx.message.text);
+    console.log(ctx.from);
+    await ctx.reply(ctx.message.text);
 });
 
 
