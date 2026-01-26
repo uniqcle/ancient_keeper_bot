@@ -1,20 +1,26 @@
 import { InlineKeyboard, Composer } from "grammy";
 import { MyContext } from "../types/types.js";
-import questImg from "../json/quests.json" with { type: "json" };
+import { questsImgType, IItem } from "../types/quests.js";
+import questsImg from "../json/quests.json" with { type: "json" };
 
 const quests = new Composer<MyContext>();
+const data = questsImg as questsImgType;
 
-const main = async (ctx: MyContext) => {
+const main = async (ctx: MyContext, key: string, item: IItem) => {
+    const keyNum = Number(key);
+    const total = 6;
+    const prevKey = keyNum === 1 ? total : keyNum - 1;
+    const nextKey = keyNum === total ? 1 : keyNum + 1;
+
     try {
-        await ctx.replyWithPhoto(questImg["1"].url, {
-            caption:
-                "Тебе проедстоит до нас.\n\nЗдесь нет суеты. Только тишина старинных свитков, свет разума в темноте забвения и ключи — не к сундукам золота, а к себе самому.\n\nДревность не мертва. Прошлое - это ключ к настоящему.\n Готов начать? 🏺🦉",
+        await ctx.replyWithPhoto(item.img, {
+            caption: `${item.title}`,
             reply_markup: new InlineKeyboard()
-                .text("👉 Начать этот квест", "scrolls")
+                .text("👉 Начать этот квест", "egypt")
                 .row()
-                .text("◀️  Назад", "scrolls")
-                .text("📜 1/7", "quests")
-                .text("Вперед ▶️", "scrolls")
+                .text("◀️  Назад", `quest${prevKey}`)
+                .text(`📜 ${keyNum}/6`, `${item.id}${key}`)
+                .text("Вперед ▶️", `quest${nextKey}`)
                 .row()
                 .text("🏛️ В начало", "start"),
             parse_mode: "HTML",
@@ -25,13 +31,37 @@ const main = async (ctx: MyContext) => {
     }
 };
 
-quests.callbackQuery(["quest", "quest1"], async (ctx: MyContext) => {
-    await ctx.answerCallbackQuery();
-    await main(ctx);
-});
+const info = async (ctx: MyContext, key: string, item: IItem) => {
+    try {
+        await ctx.replyWithPhoto(item.img, {
+            caption: `${item.info}`,
+            reply_markup: new InlineKeyboard()
+                .row()
+                .text("🏛️ Назад", `quest${key}`),
+            parse_mode: "HTML",
+            protect_content: true,
+        });
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+for (const [key, item] of Object.entries(data)) {
+    console.log(key, item.title, item.img);
+
+    quests.callbackQuery([`quest${key}`], async (ctx: MyContext) => {
+        await ctx.answerCallbackQuery();
+        await main(ctx, key, item);
+    });
+
+    quests.callbackQuery([`${item.id}${key}`], async (ctx: MyContext) => {
+        await ctx.answerCallbackQuery();
+        await info(ctx, key, item);
+    });
+}
 
 quests.command("quest", async (ctx: MyContext) => {
-    main(ctx);
+    main(ctx, "1", questsImg["1"]);
 });
 
 export { quests };
