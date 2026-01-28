@@ -4,7 +4,7 @@ import { hydrate } from "@grammyjs/hydrate";
 import { limit } from "@grammyjs/ratelimiter";
 import mongoose from "mongoose";
 import { MyContext } from "./types/types.js";
-import { start, quests } from "./composers/index.js";
+import { start, quests, tomb } from "./composers/index.js";
 import commandsJson from "./json/commands.json" with { type: "json" };
 
 const BOT_API_KEY = process.env.BOT_TOKEN;
@@ -22,6 +22,7 @@ bot.use(hydrate());
 //bot.use(userAuth);
 bot.use(start);
 bot.use(quests);
+bot.use(tomb);
 
 // bot.callbackQuery("menu", async (ctx) => {
 //     await ctx.answerCallbackQuery();

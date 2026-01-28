@@ -14,7 +14,7 @@ const main = async (ctx: MyContext) => {
                 .row()
                 .text("🗝️ Тайные свитки", "scrolls")
                 .row()
-                .text("🏆 Мои трофеи", "trophies")
+                .text("🏆 Мои достижения", "progress")
                 .text("💰 Подписка", "premium"),
             parse_mode: "HTML",
             protect_content: true,

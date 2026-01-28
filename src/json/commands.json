@@ -2,6 +2,6 @@
      { "command": "start", "description": "Начало пути" },
      { "command": "quest", "description": "Загадки Хранителя" },
      { "command": "scrolls", "description": "Тайные свитки" },
-     { "command": "trophies", "description": "Мои трофеи" },
+     { "command": "progress", "description": "Мои достижения" },
      { "command": "premium", "description": "Подписка" }
  ]

@@ -1,10 +1,10 @@
 import { InlineKeyboard, Composer } from "grammy";
 import { MyContext } from "../types/types.js";
-import { questsImgType, IItem } from "../types/quests.js";
-import questsImg from "../json/quests.json" with { type: "json" };
+import { questsDataType, IItem } from "../types/quests.js";
+import questsData from "../json/quests.json" with { type: "json" };
 
 const quests = new Composer<MyContext>();
-const data = questsImg as questsImgType;
+const data = questsData as questsDataType;
 
 const main = async (ctx: MyContext, key: string, item: IItem) => {
     const keyNum = Number(key);
@@ -16,7 +16,7 @@ const main = async (ctx: MyContext, key: string, item: IItem) => {
         await ctx.replyWithPhoto(item.img, {
             caption: `${item.title}`,
             reply_markup: new InlineKeyboard()
-                .text("👉 Начать этот квест", "egypt")
+                .text("👉 Начать этот квест", item.id)
                 .row()
                 .text("◀️  Назад", `quest${prevKey}`)
                 .text(`📜 ${keyNum}/6`, `${item.id}${key}`)
@@ -61,7 +61,7 @@ for (const [key, item] of Object.entries(data)) {
 }
 
 quests.command("quest", async (ctx: MyContext) => {
-    main(ctx, "1", questsImg["1"]);
+    main(ctx, "1", questsData["1"]);
 });
 
 export { quests };

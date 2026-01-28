@@ -1,10 +1,10 @@
 interface IItem {
-	id: string;
-	img: string; 
-	title: string;
-	info?: string;
+    id: string;
+    img: string;
+    title: string;
+    info?: string;
 }
 
-type questsImgType = Record<string, IItem>
+type questsDataType = Record<string, IItem>;
 
-export { IItem, questsImgType };
+export { IItem, questsDataType };
