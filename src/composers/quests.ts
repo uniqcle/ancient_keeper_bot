@@ -1,10 +1,16 @@
-import { InlineKeyboard, Composer } from "grammy";
+import path from "node:path";
+import { InlineKeyboard, Composer, InputFile } from "grammy";
 import { MyContext } from "../types/types.js";
 import { questsDataType, IItem } from "../types/quests.js";
 import questsData from "../json/quests.json" with { type: "json" };
 
 const quests = new Composer<MyContext>();
 const data = questsData as questsDataType;
+const DOMAIN_URL: string | undefined = process.env.DOMAIN_URL;
+
+if (!DOMAIN_URL) {
+    throw new Error("Переменная окружения URL не задана!");
+}
 
 const main = async (ctx: MyContext, key: string, item: IItem) => {
     const keyNum = Number(key);
@@ -12,11 +18,19 @@ const main = async (ctx: MyContext, key: string, item: IItem) => {
     const prevKey = keyNum === 1 ? total : keyNum - 1;
     const nextKey = keyNum === total ? 1 : keyNum + 1;
 
+    //const imgPath = path.resolve("/images", item.id, item.img);
+    //const imgPath = path.join("images", item.id, item.img);
+    //console.log(new InputFile(imgPath));
+
     try {
-        await ctx.replyWithPhoto(item.img, {
+        console.log("Данные: ", DOMAIN_URL);
+        const imageUrl = new URL(`images/${item.id}/${item.img}`, DOMAIN_URL)
+            .href;
+
+        await ctx.replyWithPhoto(imageUrl, {
             caption: `${item.title}`,
             reply_markup: new InlineKeyboard()
-                .text("👉 Начать этот квест", item.id)
+                .text("👉 Начать этот квест!", item.id)
                 .row()
                 .text("◀️  Назад", `quest${prevKey}`)
                 .text(`📜 ${keyNum}/6`, `${item.id}${key}`)
@@ -33,7 +47,8 @@ const main = async (ctx: MyContext, key: string, item: IItem) => {
 
 const info = async (ctx: MyContext, key: string, item: IItem) => {
     try {
-        await ctx.replyWithPhoto(item.img, {
+        console.log(URL);
+        await ctx.replyWithPhoto(URL + item.img, {
             caption: `${item.info}`,
             reply_markup: new InlineKeyboard()
                 .row()

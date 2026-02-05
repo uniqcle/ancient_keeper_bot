@@ -6,14 +6,30 @@ import mongoose from "mongoose";
 import { MyContext } from "./types/types.js";
 import { start, quests, tomb } from "./composers/index.js";
 import commandsJson from "./json/commands.json" with { type: "json" };
+import express from "express";
+import { fileURLToPath } from "node:url";
+import path, { dirname, join } from "node:path";
 
 const BOT_API_KEY = process.env.BOT_TOKEN;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 if (!BOT_API_KEY) {
     throw new Error("BOT_API_KEY is not defined");
 }
 
 const bot = new Bot<MyContext>(BOT_API_KEY);
+const app = express();
+
+app.set("view engine", "ejs");
+//app.set("views", path.resolve(__dirname, "templates")); //установка папки шаблона
+//console.log('Текущий каталог: ', app.get("views"));
+
+console.log(path.join(__dirname, "..", "images"));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/images", express.static(path.join(__dirname, "..", "images")));
 
 bot.api.setMyCommands(commandsJson);
 
@@ -23,6 +39,10 @@ bot.use(hydrate());
 bot.use(start);
 bot.use(quests);
 bot.use(tomb);
+
+app.get("/", (req, res) => {
+    res.send('<img src="/images/start.png" alt="start">');
+});
 
 // bot.callbackQuery("menu", async (ctx) => {
 //     await ctx.answerCallbackQuery();
@@ -38,10 +58,6 @@ bot.on("message:text", async (ctx) => {
     console.log(ctx.from);
     await ctx.reply(ctx.message.text);
 });
-
-
-
-
 
 // Обработка ошибок согласно документации
 bot.catch((err) => {
@@ -76,3 +92,8 @@ async function startBot() {
 }
 
 startBot();
+
+app.listen("3000", async () => {
+    console.log("webserver is working...");
+    //await bot.api.setWebhook(`${URL}/bot${TOKEN}`);
+});

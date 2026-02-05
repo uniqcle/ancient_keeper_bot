@@ -1,7 +1,8 @@
  [
      { "command": "start", "description": "Начало пути" },
      { "command": "quest", "description": "Загадки Хранителя" },
-     { "command": "scrolls", "description": "Тайные свитки" },
+     { "command": "scrolls", "description": "Забытые свитки" },
+     { "command": "cache", "description": "Тайник хранителя" },
      { "command": "progress", "description": "Мои достижения" },
      { "command": "premium", "description": "Подписка" }
  ]
